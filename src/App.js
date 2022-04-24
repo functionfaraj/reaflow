@@ -103,13 +103,6 @@ export const App = () => {
       });
       setEdges(finalEdges);
     }
-
-    // nodes([])
-  };
-  const isSourceExit = (source) => {
-    const index = nodes.findIndex((elem) => elem.id == source);
-
-    return index >= 0 ? true : false;
   };
   return (
     <Canvas
