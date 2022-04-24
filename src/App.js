@@ -56,14 +56,11 @@ export const App = () => {
         })
         .filter(Boolean);
       for (const edge of fromEdges) {
-        console.log("edge", edge);
         //CheckIfParent
         const parent = nodeParent[edge];
         if (parent) {
-          console.log("parent", parent);
           if (parent.length > 1) {
             for (const child of parent) {
-              console.log("child", child);
               ///Check if child parent
               if (nodeParent[child]) {
                 finalEdges = finalEdges.filter((elem) => {
