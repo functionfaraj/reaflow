@@ -12,6 +12,16 @@ export const App = () => {
     }, Object.create({})),
     [edges]
   );
+  const handleRemoveNode = (source, finalNodes) => {
+    return finalNodes.filter((elem) => {
+      if (!source.includes(elem.id)) return true;
+    });
+  };
+  const handleRemoveEdge = (source, finalEdges) => {
+    return finalEdges.filter((elem) => {
+      if (!source.includes(elem.to)) return true;
+    });
+  };
   const handleOnClickNode = (node) => {
     const nodeId = node.id;
     if (node.properties.collapse) {
@@ -56,57 +66,30 @@ export const App = () => {
         })
         .filter(Boolean);
       for (const edge of fromEdges) {
-        //CheckIfParent
         const parent = nodeParent[edge];
         if (parent) {
           if (parent.length > 1) {
             for (const child of parent) {
-              ///Check if child parent
               if (nodeParent[child]) {
-                finalEdges = finalEdges.filter((elem) => {
-                  if (!nodeParent[child].includes(elem.to)) return true;
-                });
-                finalNode = finalNode.filter((elem) => {
-                  if (!nodeParent[child].includes(elem.id)) return true;
-                });
+                finalEdges = handleRemoveEdge(nodeParent[child], finalEdges);
+                finalNode = handleRemoveNode(nodeParent[child], finalNode);
               }
             }
           }
           if (nodeParent[nodeParent[edge]]) {
             const parent = nodeParent[nodeParent[edge]];
-            console.log("parent", parent);
-            console.log("nodeParent", nodeParent);
-            if(nodeParent[parent]){
-              console.log('have children',nodeParent[parent])
-              finalEdges = finalEdges.filter((elem) => {
-                if (!nodeParent[parent].includes(elem.to)) return true;
-              });
-              finalNode = finalNode.filter((elem) => {
-                if (!nodeParent[parent].includes(elem.id)) return true;
-              });
-              console.log({finalEdges})
-              console.log({finalNode})
+            if (nodeParent[parent]) {
+              finalEdges = handleRemoveEdge(nodeParent[parent], finalEdges);
+              finalNode = handleRemoveNode(nodeParent[parent], finalNode);
             }
-            finalEdges = finalEdges.filter((elem) => {
-              if (!parent.includes(elem.to)) return true;
-            });
-            finalNode = finalNode.filter((elem) => {
-              if (!parent.includes(elem.id)) return true;
-            });
+            finalEdges = handleRemoveEdge(parent, finalEdges);
+            finalNode = handleRemoveNode(parent, finalNode);
           }
-
-          finalEdges = finalEdges.filter((elem) => {
-            if (!nodeParent[edge].includes(elem.to)) return true;
-          });
-          finalNode = finalNode.filter((elem) => {
-            if (!nodeParent[edge].includes(elem.id)) return true;
-          });
+          finalEdges = handleRemoveEdge(nodeParent[edge], finalEdges);
+          finalNode = handleRemoveNode(nodeParent[edge], finalNode);
         }
       }
-
-      finalNode = finalNode.filter((elem) => {
-        if (!fromEdges.includes(elem.id)) return true;
-      });
+      finalNode = handleRemoveNode(fromEdges, finalNode);
       const index = finalNode.findIndex((elem) => {
         return elem.id === nodeId;
       });
