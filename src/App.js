@@ -56,11 +56,40 @@ export const App = () => {
         })
         .filter(Boolean);
       for (const edge of fromEdges) {
+        console.log("edge", edge);
         //CheckIfParent
-        if (nodeParent[edge]) {
-          //CheckIfParent
+        const parent = nodeParent[edge];
+        if (parent) {
+          console.log("parent", parent);
+          if (parent.length > 1) {
+            for (const child of parent) {
+              console.log("child", child);
+              ///Check if child parent
+              if (nodeParent[child]) {
+                finalEdges = finalEdges.filter((elem) => {
+                  if (!nodeParent[child].includes(elem.to)) return true;
+                });
+                finalNode = finalNode.filter((elem) => {
+                  if (!nodeParent[child].includes(elem.id)) return true;
+                });
+              }
+            }
+          }
           if (nodeParent[nodeParent[edge]]) {
             const parent = nodeParent[nodeParent[edge]];
+            console.log("parent", parent);
+            console.log("nodeParent", nodeParent);
+            if(nodeParent[parent]){
+              console.log('have children',nodeParent[parent])
+              finalEdges = finalEdges.filter((elem) => {
+                if (!nodeParent[parent].includes(elem.to)) return true;
+              });
+              finalNode = finalNode.filter((elem) => {
+                if (!nodeParent[parent].includes(elem.id)) return true;
+              });
+              console.log({finalEdges})
+              console.log({finalNode})
+            }
             finalEdges = finalEdges.filter((elem) => {
               if (!parent.includes(elem.to)) return true;
             });
@@ -68,6 +97,7 @@ export const App = () => {
               if (!parent.includes(elem.id)) return true;
             });
           }
+
           finalEdges = finalEdges.filter((elem) => {
             if (!nodeParent[edge].includes(elem.to)) return true;
           });
